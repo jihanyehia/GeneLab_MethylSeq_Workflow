@@ -2,6 +2,8 @@
 
 > GeneLab, part of [NASA's Open Science Data Repository (OSDR)](https://www.nasa.gov/osdr), has wrapped each step of the Methylation Sequencing (Methyl-Seq) consensus pipeline ([MethylSeq](https://github.com/nasa/GeneLab_Data_Processing/tree/master/Methyl-Seq)) into a Nextflow workflow with validation and verification of output files built in after each step. This repository contains the Nextflow workflow code (NF_MethylSeq) along with instructions for installation and usage. Exact workflow run info and MethylCP version used to process specific datasets that have been released are available in the \*nextflow\_processing\_info.txt file on the [Open Science Data Repository (OSDR)](https://osdr.nasa.gov/bio/repo/), which can be found under 'Files' -> 'GeneLab Processed Methyl-Seq Files' -> 'Supplemental Materials'.
 
+<br>
+
 # NF\_MethylSeq Workflow Information and Usage Instructions
 
 ## General workflow info
@@ -38,7 +40,7 @@ No Warranty: THE SUBJECT SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY OF AN
 
 Waiver and Indemnity: RECIPIENT AGREES TO WAIVE ANY AND ALL CLAIMS AGAINST THE UNITED STATES GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY PRIOR RECIPIENT.  IF RECIPIENT'S USE OF THE SUBJECT SOFTWARE RESULTS IN ANY LIABILITIES, DEMANDS, DAMAGES, EXPENSES OR LOSSES ARISING FROM SUCH USE, INCLUDING ANY DAMAGES FROM PRODUCTS BASED ON, OR RESULTING FROM, RECIPIENT'S USE OF THE SUBJECT SOFTWARE, RECIPIENT SHALL INDEMNIFY AND HOLD HARMLESS THE UNITED STATES GOVERNMENT, ITS CONTRACTORS AND SUBCONTRACTORS, AS WELL AS ANY PRIOR RECIPIENT, TO THE EXTENT PERMITTED BY LAW.  RECIPIENT'S SOLE REMEDY FOR ANY SUCH MATTER SHALL BE THE IMMEDIATE, UNILATERAL TERMINATION OF THIS AGREEMENT. 
 
-The “GeneLab Methylation Sequencing Processing Pipeline and Workflow” software also makes use of the following 3rd party Open Source software, released under the licenses indicated above.  A complete listing of 3rd Party software notices and licenses made use of in “GeneLab Methylation Sequencing Processing Pipeline and Workflow” can be found in the [Methyl-Seq_3rd_Party_Software.md](License/3rd_Party_Licenses/Methyl-Seq_3rd_Party_Software.md) file as indicated above. 
+The “GeneLab Methylation Sequencing Processing Pipeline and Workflow” software also makes use of 3rd party Open Source software, released under the licenses indicated above. A complete listing of 3rd Party software notices and licenses made use of in "GeneLab Methylation Sequencing Processing Pipeline and Workflow” can be found in the [3rd Party Licenses README.md](License/3rd_Party_Licenses/README.md) file. 
 
 <br>
 
