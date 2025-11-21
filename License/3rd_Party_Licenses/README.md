@@ -1,4 +1,4 @@
-## The NASA GeneLab Methylation Sequencing Data Processing Workflow also makes use of the following 3rd party Open Source software:
+## The NASA GeneLab [Methyl-Seq](../Methyl-Seq) Processing Pipeline and workflow also makes use of the following 3rd party Open Source software:
 
 |3rd Party Software Name|License|License URL|Copyright Notice|
 |:----------------------|:------|:----------|:----------------------|
