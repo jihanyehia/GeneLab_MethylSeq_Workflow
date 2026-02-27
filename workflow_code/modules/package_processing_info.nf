@@ -11,9 +11,7 @@ process PACKAGE_PROCESSING_INFO {
 
     script:
     """
-    mkdir -p processing_scripts
-
-    for f in nextflow*.txt; do
+    for f in ${processing_scripts}/nextflow*.txt; do
         echo "Purging file paths from \$f"
         clean_paths.sh "\$f"
 
@@ -22,8 +20,6 @@ process PACKAGE_PROCESSING_INFO {
             mv "\$f" "\${f%.txt}${assay_suffix}.txt"
         fi
     done
-
-    mv nextflow*.txt processing_scripts/ 2>/dev/null || true
         
     # Zip 
     zip -r processing_info${assay_suffix}.zip processing_scripts

@@ -56,7 +56,7 @@ workflow {
 
     ch_unpurged_files = channel.fromPath("${processed_dir}/Aligned_Sequence_Data/Alignment_Reports/*report.txt")
 
-    ch_processing_info = channel.fromPath("$launchDir/processing_scripts/nextflow*.txt")
+    ch_processing_info = channel.fromPath("$launchDir/processing_scripts", type: 'dir')
 
     ch_software_versions = channel.fromPath("${processed_dir}/GeneLab/software_versions_*.md")
 
