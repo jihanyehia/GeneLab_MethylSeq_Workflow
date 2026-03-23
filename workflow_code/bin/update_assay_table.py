@@ -5,6 +5,7 @@ import argparse
 import zipfile
 import pandas as pd
 import json
+import re
 
 
 def parse_args():
@@ -841,6 +842,34 @@ def clean_comma_space(df):
     return df
 
 
+def clean_column_names(df):
+    """Clean column names by removing any .# suffixes pandas adds to duplicates.
+    
+    Args:
+        df: The DataFrame to clean column names
+        
+    Returns:
+        The DataFrame with cleaned column names
+    """
+    # Create a mapping of old_name -> new_name (without .# suffix)
+    name_mapping = {}
+    for col in df.columns:
+        # Use regex to match column names with .digits suffix
+        if re.search(r'\.\d+$', col):
+            # Remove the .# suffix
+            base_name = re.sub(r'\.\d+$', '', col)
+            name_mapping[col] = base_name
+    
+    # Rename columns using the mapping if any found
+    if name_mapping:
+        print(f"Cleaning {len(name_mapping)} column names by removing .# suffixes:")
+        for old_name, new_name in name_mapping.items():
+            print(f"  - {old_name} -> {new_name}")
+        df = df.rename(columns=name_mapping)
+    
+    return df
+
+
 def main():
     args = parse_args()
 
@@ -872,7 +901,7 @@ def main():
     glds_id = args.glds_accession.upper()
     glds_prefix = f"{glds_id}_G{resource_category}_"
 
-    # Find RNA-Seq assay file and get its contents
+    # Find Methyl-Seq assay file and get its contents
     if args.isa_zip != '':
         print(f"Extracting assay table from {args.isa_zip} based on assay type: {assay} "
               f"and technology type: {technology}")
@@ -968,6 +997,9 @@ def main():
 
         # Clean comma-space in all string columns
         assay_df = clean_comma_space(assay_df)
+
+        # Clean column names by removing any .# suffixes pandas adds
+        assay_df = clean_column_names(assay_df)
 
         # Use the filename we found in extract_and_find_assay
         orig_filename = assay_filename
