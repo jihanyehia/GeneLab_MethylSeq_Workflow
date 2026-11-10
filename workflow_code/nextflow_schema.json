@@ -98,19 +98,23 @@
             "default": "",
             "properties": {
                 "clip_r1": {
-                    "type": "integer",
+                    "type": ["integer", "null"],
+                    "default": null,
                     "description": "Specifies number of bases to trim from the 5' end of read 1 (or single-end reads)"
                 },
                 "clip_r2": {
-                    "type": "integer",
+                    "type": ["integer", "null"],
+                    "default": null,
                     "description": "Specifies number of bases to trim from the 5' end of read 2 (paired-end reads only)"
                 },
                 "three_prime_clip_r1": {
-                    "type": "integer",
+                    "type": ["integer", "null"],
+                    "default": null,
                     "description": "Specifies number of bases to trim from the 3' end of read 1 (or single-end reads)"
                 },
                 "three_prime_clip_r2": {
-                    "type": "integer",
+                    "type": ["integer", "null"],
+                    "default": null,
                     "description": "Specifies number of bases to trim from the 3' end of read 2 (paired-end reads only)"
                 }
             }
@@ -232,16 +236,6 @@
                             "default": "GL-DPPD-7113",
                             "description": "GeneLab pipeline document protocol ID."
                         },
-                        "osd_accession": {
-                            "type": "string",
-                            "description": "OSD accession number (e.g. 'OSD-47').",
-                            "pattern": "^OSD-[0-9]+$"
-                        },
-                        "glds_accession": {
-                            "type": "string",
-                            "description": "GLDS accession number (e.g. 'GLDS-47').",
-                            "pattern": "^GLDS-[0-9]+$"
-                        },
                         "include_raw_data": {
                             "type": "boolean",
                             "default": false,
@@ -256,9 +250,7 @@
                     "required":[
                         "name", 
                         "email", 
-                        "protocol_id", 
-                        "osd_accession", 
-                        "glds_accession"
+                        "protocol_id"
                     ]
                 }
             }
@@ -278,7 +270,8 @@
                                 "clip_r1":             { "type": "integer", "default": 6 },
                                 "clip_r2":             { "type": "integer", "default": 9 },
                                 "three_prime_clip_r1": { "type": "integer", "default": 6 },
-                                "three_prime_clip_r2": { "type": "integer", "default": 9 }
+                                "three_prime_clip_r2": { "type": "integer", "default": 9 },
+                                "non_directional":     { "type": "boolean", "default": false }
                             }
                         },
                         "em-seq": {
@@ -288,14 +281,20 @@
                                 "clip_r1":             { "type": "integer", "default": 10 },
                                 "clip_r2":             { "type": "integer", "default": 10 },
                                 "three_prime_clip_r1": { "type": "integer", "default": 10 },
-                                "three_prime_clip_r2": { "type": "integer", "default": 10 }
+                                "three_prime_clip_r2": { "type": "integer", "default": 10 },
+                                "non_directional":     { "type": "boolean", "default": false }
                             }
                         },
                         "bs-seq": {
                             "type": "object",
                             "description": "Pre-configured parameters for standard bisulfite sequencing (BS-seq) libraries.",
                             "properties": {
-                                "ignore_r2": { "type": "integer", "default": 2 }
+                                "clip_r1":             { "type": ["integer", "null"], "default": null },
+                                "clip_r2":             { "type": ["integer", "null"], "default": null },
+                                "three_prime_clip_r1": { "type": ["integer", "null"], "default": null },
+                                "three_prime_clip_r2": { "type": ["integer", "null"], "default": null },
+                                "non_directional":     { "type": "boolean", "default": false },
+                                "ignore_r2":           { "type": "integer", "default": 2 }
                             }
                         },
                         "zymo": {
@@ -313,7 +312,12 @@
                             "type": "object",
                             "description": "Pre-configured parameters for NuGEN Ovation Methyl-seq libraries.",
                             "properties": {
-                                "ignore_r2": { "type": "integer", "default": 2 }
+                                "clip_r1":             { "type": ["integer", "null"], "default": null },
+                                "clip_r2":             { "type": ["integer", "null"], "default": null },
+                                "three_prime_clip_r1": { "type": ["integer", "null"], "default": null },
+                                "three_prime_clip_r2": { "type": ["integer", "null"], "default": null },
+                                "non_directional":     { "type": "boolean", "default": false },
+                                "ignore_r2":           { "type": "integer", "default": 2 }
                             }
                         },
                         "accel": {
@@ -323,7 +327,8 @@
                                 "clip_r1":             { "type": "integer", "default": 10 },
                                 "clip_r2":             { "type": "integer", "default": 15 },
                                 "three_prime_clip_r1": { "type": "integer", "default": 10 },
-                                "three_prime_clip_r2": { "type": "integer", "default": 10 }
+                                "three_prime_clip_r2": { "type": "integer", "default": 10 },
+                                "non_directional":     { "type": "boolean", "default": false }
                             }
                         },
                         "epignome": {
@@ -333,7 +338,8 @@
                                 "clip_r1":             { "type": "integer", "default": 8 },
                                 "clip_r2":             { "type": "integer", "default": 8 },
                                 "three_prime_clip_r1": { "type": "integer", "default": 8 },
-                                "three_prime_clip_r2": { "type": "integer", "default": 8 }
+                                "three_prime_clip_r2": { "type": "integer", "default": 8 },
+                                "non_directional":     { "type": "boolean", "default": false }
                             }
                         }
                     }
@@ -402,6 +408,11 @@
             "default": "${projectDir}/config/multiqc.config",
             "description": "Path to the MultiQC config file.",
             "format": "file-path"
+        },
+        "trace_timestamp": {
+            "type": "string",
+            "hidden": true,
+            "description": "Internal timestamp used to name Nextflow execution reports."
         }
     },
     "required": [

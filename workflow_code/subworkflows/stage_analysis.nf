@@ -8,12 +8,14 @@ include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
  * STAGE_ANALYSIS
  * 
  * This subworkflow handles the initial setup of the Methylseq analysis:
- * 1. Fetches accessions if needed
- * 2. Obtains or creates the runsheet
- * 3. Parses the runsheet and stages raw reads
+ * 1. Sets up the output directory structure
+ * 2. Fetches accessions if needed
+ * 3. Obtains or creates the runsheet
+ * 4. Parses the runsheet and stages raw reads
  */
 workflow STAGE_ANALYSIS {
     take:
+        ch_outdir
         dp_tools_plugin
         accession
         isa_archive_path
@@ -21,15 +23,23 @@ workflow STAGE_ANALYSIS {
         api_url
 
     main:
-        // Parse accession
+        // Parse accession, structure output directory as:
+        // params.outdir/
+        //   ├── [GLDS-#|results]/ # Main pipeline results
+        //   └── nextflow_info/    # Pipeline execution metadata
         channel.empty() | set { osd_accession }
         channel.empty() | set { glds_accession }
         
         if ( accession ) {
             GET_ACCESSIONS( accession, api_url )
-            osd_accession = GET_ACCESSIONS.out.accessions_txt.map { it.readLines()[0].trim() }
-            glds_accession = GET_ACCESSIONS.out.accessions_txt.map { it.readLines()[1].trim() }
+            osd_accession = GET_ACCESSIONS.out.accessions_txt.map { txt -> txt.readLines()[0].trim() }
+            glds_accession = GET_ACCESSIONS.out.accessions_txt.map { txt -> txt.readLines()[1].trim() }
+            ch_outdir = ch_outdir.combine(glds_accession).map { outdir, glds -> "$outdir/$glds" }
         }
+        else {
+            ch_outdir = ch_outdir.map { dir -> dir + "/results" }
+        }
+        ch_outdir = ch_outdir.first()
 
         channel.empty() | set { isa_archive }
         channel.empty() | set { dp_tools_version }
@@ -43,6 +53,7 @@ workflow STAGE_ANALYSIS {
             }
             ISA_TO_RUNSHEET( osd_accession, glds_accession, isa_archive, dp_tools_plugin )
             runsheet_path = ISA_TO_RUNSHEET.out.runsheet
+            isa_archive = ISA_TO_RUNSHEET.out.staged_isa_archive
             dp_tools_version = ISA_TO_RUNSHEET.out.version
         }
 
@@ -58,6 +69,7 @@ workflow STAGE_ANALYSIS {
         raw_reads = STAGE_RAW_READS.out.raw_reads
         
     emit:
+        ch_outdir       = ch_outdir
         samples         = samples
         raw_reads       = raw_reads
         runsheet_path   = runsheet_path

@@ -16,7 +16,7 @@ process TRIMGALORE {
       def relevantParams = meta.paired_end ?
         [params.clip_r1, params.clip_r2, params.three_prime_clip_r1, params.three_prime_clip_r2] :
         [params.clip_r1, params.three_prime_clip_r1]
-      if (relevantParams.every { it == null }) {
+      if (relevantParams.every { value -> value == null }) {
         log.warn "Library '${meta.kit}' not found in library_presets config and clip params were kept null, proceeding without any clipping.\n" +
             "If clipping is required, either pass clip params directly (--clip_r1, --three_prime_clip_r1${meta.paired_end ? ', --clip_r2, --three_prime_clip_r2' : ''}) or add a preset for '${meta.kit}' to library_presets in your config."
       }
@@ -31,10 +31,10 @@ process TRIMGALORE {
     }
 
     // Resolve flags
-    def clipR1Flag = clipFlag(params.clip_r1, preset.clip_r1, 'clip_R1')
-    def clipR2Flag = meta.paired_end ? clipFlag(params.clip_r2, preset.clip_r2, 'clip_R2') : ''
-    def tpcR1Flag  = clipFlag(params.three_prime_clip_r1, preset.three_prime_clip_r1, 'three_prime_clip_R1')
-    def tpcR2Flag  = meta.paired_end ? clipFlag(params.three_prime_clip_r2, preset.three_prime_clip_r2, 'three_prime_clip_R2') : ''
+    def clipR1Flag = clipFlag.call(params.clip_r1, preset.clip_r1, 'clip_R1')
+    def clipR2Flag = meta.paired_end ? clipFlag.call(params.clip_r2, preset.clip_r2, 'clip_R2') : ''
+    def tpcR1Flag  = clipFlag.call(params.three_prime_clip_r1, preset.three_prime_clip_r1, 'three_prime_clip_R1')
+    def tpcR2Flag  = meta.paired_end ? clipFlag.call(params.three_prime_clip_r2, preset.three_prime_clip_r2, 'three_prime_clip_R2') : ''
 
     def assay_suffix = params.assay_suffix ? params.assay_suffix : "${meta.assay_suffix}"
     def rrbs_flag = (meta.rrbs && meta.kit != "nugen") ? '--rrbs' : ''

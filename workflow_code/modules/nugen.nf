@@ -12,9 +12,6 @@ process NUGEN {
   output:
     tuple val(meta), path("${ meta.id }*trimmed.fastq.gz"), emit: reads
 
-  when:
-    meta.kit == "nugen"
-
   script:
     def assay_suffix = params.assay_suffix ? params.assay_suffix : "${meta.assay_suffix}"
     if (meta.paired_end) {

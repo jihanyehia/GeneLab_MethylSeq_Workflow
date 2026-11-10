@@ -1,11 +1,3 @@
-def colorCodes = [
-    c_line: "┅" * 70,
-    c_back_bright_red: "\u001b[41;1m",
-    c_bright_green: "\u001b[32;1m",
-    c_blue: "\033[0;34m",
-    c_yellow: "\u001b[33;1m",
-    c_reset: "\033[0m"
-]
 // Adapted from Function: https://github.com/nf-core/rnaseq/blob/master/modules/local/process/samplesheet_check.nf
 // Function to get list of [ meta, [ fastq_1_path, fastq_2_path ] ]
 def get_runsheet_paths(LinkedHashMap row) {
@@ -21,7 +13,7 @@ def get_runsheet_paths(LinkedHashMap row) {
     meta.assay_suffix = meta.rna ? "_GLRNAMethylSeq" : "_GLMethylSeq"
 
     // Extract factors
-    meta.factors = row.findAll { key, value -> 
+    meta.factors = row.findAll { key, _value -> 
         key.startsWith("Factor Value[") && key.endsWith("]")
     }.collectEntries { key, value ->
         [(key[13..-2]): value] // Remove "Factor Value[" and "]"
@@ -70,6 +62,15 @@ workflow PARSE_RUNSHEET {
         runsheet_path
     
     main:
+        def colorCodes = [
+            c_line: "┅" * 70,
+            c_back_bright_red: "\u001b[41;1m",
+            c_bright_green: "\u001b[32;1m",
+            c_blue: "\033[0;34m",
+            c_yellow: "\u001b[33;1m",
+            c_reset: "\033[0m"
+        ]
+
         sample_limit = params.limit_samples_to ? params.limit_samples_to : -1 // -1 in take means no limit
 
         // Only run truncation if there's an actual limit being applied
@@ -92,7 +93,7 @@ workflow PARSE_RUNSHEET {
 
         // Validate consistency across samples
         ch_samples
-            .map { meta, reads -> [meta.paired_end, meta.organism_sci, meta.rna, meta.rrbs, meta.kit] }
+            .map { meta, _reads -> [meta.paired_end, meta.organism_sci, meta.rna, meta.rrbs, meta.kit] }
             .unique()
             .count()
             .subscribe { count ->
@@ -105,7 +106,7 @@ workflow PARSE_RUNSHEET {
             }
 
         // Print autodetected processing metadata for the first sample
-        ch_samples.take(1) | view { meta, reads -> 
+        ch_samples.take(1) | view { meta, _reads -> 
             """${colorCodes.c_bright_green}Autodetected Processing Metadata:
             Paired End: ${meta.paired_end}
             Organism: ${meta.organism_sci}
@@ -115,7 +116,7 @@ workflow PARSE_RUNSHEET {
         }
         // Check that all read files are unique
         ch_samples
-            .flatMap { meta, reads -> reads }
+            .flatMap { _meta, reads -> reads }
             .collect()
             .map { all_reads ->
                 def total_count = all_reads.size()

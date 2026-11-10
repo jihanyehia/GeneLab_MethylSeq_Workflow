@@ -257,12 +257,10 @@ dir.create(myargs$methylkit_output_dir, showWarnings = FALSE)
 
 gene_annotation_link <- myargs$ref_annotations_tab_link
 
-# Download with user-agent
 local_file <- "gene_annotations.tsv"
 download.file(url = gene_annotation_link,
               destfile = local_file,
-              method = "libcurl",
-              headers = c("User-Agent" = "Mozilla/5.0"))
+              method = "libcurl")
 
 functional_annots_tab <- read.table(local_file, sep = "\t", quote = "", header = TRUE)
 

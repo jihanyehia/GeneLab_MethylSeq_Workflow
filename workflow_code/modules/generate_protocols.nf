@@ -42,9 +42,6 @@ process GENERATE_RAW_PROTOCOL {
     output:
         path("raw_data_protocol*.txt"), emit: raw_protocol
 
-    when:
-        params.post_processing.include_raw_data
-
     script:
         def raw_merged_flag = params.post_processing.merged_raw_data ? '--raw_merged' : ''
 

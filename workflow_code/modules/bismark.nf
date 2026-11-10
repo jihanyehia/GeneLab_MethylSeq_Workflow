@@ -94,9 +94,6 @@ process DEDUPE {
     tuple val(meta), path("${ meta.id }*deduplicated.bam"), emit: bam
     tuple val(meta), path("${ meta.id }*deduplication_report.txt"), emit: report
 
-  when:
-    !meta.rrbs && !params.skip_dedupe
-
   script:
     """
     deduplicate_bismark ${ bam }
@@ -133,10 +130,10 @@ process EXTRACT_CALLS {
     }
 
     // Resolve flags
-    def ignoreR1Flag = ignoreFlag(params.ignore_r1, preset.ignore_r1, 'ignore')
-    def ignoreR2Flag = meta.paired_end ? ignoreFlag(params.ignore_r2, preset.ignore_r2, 'ignore_r2') : ''
-    def ignore3primeR1Flag  = ignoreFlag(params.ignore_3prime_r1, preset.ignore_3prime_r1, 'ignore_3prime')
-    def ignore3primeR2Flag  = meta.paired_end ? ignoreFlag(params.ignore_3prime_r2, preset.ignore_3prime_r2, 'ignore_3prime_r2') : ''
+    def ignoreR1Flag = ignoreFlag.call(params.ignore_r1, preset.ignore_r1, 'ignore')
+    def ignoreR2Flag = meta.paired_end ? ignoreFlag.call(params.ignore_r2, preset.ignore_r2, 'ignore_r2') : ''
+    def ignore3primeR1Flag  = ignoreFlag.call(params.ignore_3prime_r1, preset.ignore_3prime_r1, 'ignore_3prime')
+    def ignore3primeR2Flag  = meta.paired_end ? ignoreFlag.call(params.ignore_3prime_r2, preset.ignore_3prime_r2, 'ignore_3prime_r2') : ''
 
     // https://www.biostars.org/p/9594498/ - --genome_folder needs to be absolute path
     """

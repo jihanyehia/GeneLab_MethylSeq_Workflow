@@ -2,6 +2,7 @@ process GENERATE_README {
     
     input:
         val meta
+        val osd_accession
 
     output:
         path("README${meta.assay_suffix}.txt"), emit: readme
@@ -18,7 +19,7 @@ process GENERATE_README {
             --name '${params.post_processing.name}' \\
             --email '${params.post_processing.email}' \\
             --protocol-ID '${params.post_processing.protocol_id}' \\
-            --osd-id '${params.post_processing.osd_accession}' \\
+            --OSD-ID '${osd_accession}' \\
             ${raw_reads}
       """
 }

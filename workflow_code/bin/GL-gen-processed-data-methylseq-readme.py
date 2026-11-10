@@ -18,8 +18,8 @@ required = parser.add_argument_group('required arguments')
 
 required.add_argument("-a", "--assay_suffix", choices=['_GLMethylSeq', '_GLRNAMethylSeq'],
                       help="Specifies what assay suffix to use. Parsed from assay_suffix in ch_meta", action="store", required=True)
-required.add_argument("--osd-id", 
-                      help='OSDR osd_id ID (e.g. "OSD-69")', action="store", required=True)
+required.add_argument("--OSD-ID", 
+                      help='OSDR OSD ID (e.g. "OSD-69")', action="store")
 parser.add_argument("--output", "--output-name", default="",
                     help='Name of output file')
 parser.add_argument("-p", "--output-prefix", action="store", default="",
@@ -52,7 +52,7 @@ latest_methylseq_DPPD = "GL-DPPD-7113"
 
 def main():
     with open(output_file, "w") as output:
-        write_header(output, args.osd_id, args.name, args.email, args.protocol_ID, args.date)
+        write_header(output, args.OSD_ID, args.name, args.email, args.protocol_ID, args.date)
 
         write_methylseq_body(output)
 
@@ -111,18 +111,23 @@ def get_processing_zip_contents():
 
 
 def write_header(output, osd_id, name, email, protocol_id, date=datetime.date.today()):
-    if not args.osd_id.startswith("OSD-"):
-        print("OSDR osd_id must start with 'OSD-'")
-        sys.exit(1)
 
-    header = ["################################################################################\n",
-              "{:<77} {:>0}".format(f"## This directory holds processed data for NASA {osd_id}", "##\n"),
-              "{:<77} {:>0}".format(f"## https://osdr.nasa.gov/bio/repo/data/studies/{osd_id}/", "##\n"),
-              "{:<77} {:>0}".format("##", "##\n"),
-              "{:<77} {:>0}".format(f"## Processed by {name} ({email}) on {date}", "##\n"),
-              "{:<77} {:>0}".format(f"## Based on {protocol_id}", "##\n"),
-              "################################################################################\n\n",
-              "Summary of contents:\n\n"]
+    if osd_id:
+        header = ["################################################################################\n",
+                "{:<77} {:>0}".format(f"## This directory holds processed data for NASA {osd_id}", "##\n"),
+                "{:<77} {:>0}".format(f"## https://osdr.nasa.gov/bio/repo/data/studies/{osd_id}/", "##\n"),
+                "{:<77} {:>0}".format("##", "##\n"),
+                "{:<77} {:>0}".format(f"## Processed by {name} ({email}) on {date}", "##\n"),
+                "{:<77} {:>0}".format(f"## Based on {protocol_id}", "##\n"),
+                "################################################################################\n\n",
+                "Summary of contents:\n\n"]
+    else:
+        header = ["################################################################################\n",
+                "{:<77} {:>0}".format(f"## This directory holds processed Methyl-Seq data", "##\n"),
+                "{:<77} {:>0}".format(f"## Processed by {name} ({email}) on {date}", "##\n"),
+                "{:<77} {:>0}".format(f"## Based on {protocol_id}", "##\n"),
+                "################################################################################\n\n",
+                "Summary of contents:\n\n"]
 
     output.writelines(header)
 

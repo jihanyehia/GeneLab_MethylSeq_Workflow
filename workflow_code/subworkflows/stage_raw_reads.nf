@@ -10,10 +10,10 @@ workflow STAGE_RAW_READS {
         if (params.truncate_to) {
 
             // Download truncated raw reads
-            ch_samples | map { it -> it[0].paired_end ? [it[0], it[1][0], it[1][1]] : [it[0], it[1][0]]}
-                | branch {
-                paired: it.size() == 3
-                single: it.size() == 2
+            ch_samples | map { reads -> reads[0].paired_end ? [reads[0], reads[1][0], reads[1][1]] : [reads[0], reads[1][0]]}
+                | branch { reads ->
+                paired: reads.size() == 3
+                single: reads.size() == 2
                 }
                 | set{ ch_raw_read_pointers }
             
@@ -23,12 +23,12 @@ workflow STAGE_RAW_READS {
             // PAIRED END
             // Only difference is the splitFastq arg 'pe'
             ch_raw_read_pointers.paired | splitFastq(pe: true, decompress: true, compress: true, limit: params.truncate_to, by: params.truncate_to, file: true)
-                                        | map { it -> [ it[0], [ it[1], it[2] ] ]}
+                                        | map { reads -> [ reads[0], [ reads[1], reads[2] ] ] }
                                         | set { ch_raw_reads }
             // SINGLE END
             // Only difference is the splitFastq arg 'pe'
             ch_raw_read_pointers.single | splitFastq(decompress: true, compress: true, limit: params.truncate_to, by: params.truncate_to, file: true)
-                                        | map { it -> [ it[0], [ it[1] ] ]}
+                                        | map { reads -> [ reads[0], [ reads[1] ] ] }
                                         | mix( ch_raw_reads )
                                         | set { ch_raw_reads }
 
@@ -36,7 +36,7 @@ workflow STAGE_RAW_READS {
             ch_raw_reads | COPY_READS
 
         } else {
-            ch_samples | map { it -> it[0].paired_end ? [it[0], [ it[1][0], it[1][1] ]] : [it[0], [it[1][0]]]}
+            ch_samples | map { reads -> reads[0].paired_end ? [reads[0], [ reads[1][0], reads[1][1] ]] : [reads[0], [reads[1][0]]]}
                 | set { ch_raw_reads }
 
             ch_raw_reads | COPY_READS

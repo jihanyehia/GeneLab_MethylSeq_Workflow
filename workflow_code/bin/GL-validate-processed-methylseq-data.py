@@ -20,7 +20,7 @@ required = parser.add_argument_group('required arguments')
 required.add_argument("-a", "--assay_suffix", choices=['_GLMethylSeq', '_GLRNAMethylSeq'],
                       help="Specifies which datatype (assay) is to be validated. Parsed from assay_suffix in ch_meta", action="store", required=True)
 required.add_argument("-g", "--GLDS_ID", 
-                      help='GLDS ID (e.g. "GLDS-47")', action="store", required=True)
+                      help='GLDS ID (e.g. "GLDS-47")', action="store")
 required.add_argument("-s", "--runsheet", 
                       help="Runsheet with samplenames in the first column", action="store", required=True)
 required.add_argument("--outdir", 
@@ -384,7 +384,9 @@ trimmed_R1_suffix = "_R1_trimmed.fastq.gz"
 trimmed_R2_suffix = "_R2_trimmed.fastq.gz"
 
 if args.output == "":
-    validation_log = f"{args.GLDS_ID}-{output_prefix}methylseq-validation.log"
+    validation_log = f"{output_prefix}methylseq-validation.log"
+    if args.GLDS_ID:
+        validation_log = f"{args.GLDS_ID}-{validation_log}"
 else:
     validation_log = args.output
 
